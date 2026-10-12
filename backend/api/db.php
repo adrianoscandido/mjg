@@ -65,7 +65,7 @@ function initDatabase(PDO $pdo): void {
         criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
-    // 4. Inserir usuário administrador padrão se não existir
+    // 4. Inserir usuários administradores padrão se não existirem
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usuario = :u OR email = :e");
     $stmt->execute([':u' => 'sandro', ':e' => 'admin@mjgimports.com.br']);
     if ((int)$stmt->fetchColumn() === 0) {
@@ -76,6 +76,19 @@ function initDatabase(PDO $pdo): void {
             ':u'    => 'sandro',
             ':e'    => 'admin@mjgimports.com.br',
             ':h'    => $hash
+        ]);
+    }
+
+    $stmtAdr = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usuario = :u OR email = :e");
+    $stmtAdr->execute([':u' => 'adriano', ':e' => 'adriano@mjgimports.com.br']);
+    if ((int)$stmtAdr->fetchColumn() === 0) {
+        $hashAdr = password_hash('May@2027', PASSWORD_BCRYPT);
+        $insAdr = $pdo->prepare("INSERT INTO usuarios (nome, usuario, email, senha_hash) VALUES (:nome, :u, :e, :h)");
+        $insAdr->execute([
+            ':nome' => 'Adriano',
+            ':u'    => 'adriano',
+            ':e'    => 'adriano@mjgimports.com.br',
+            ':h'    => $hashAdr
         ]);
     }
 
