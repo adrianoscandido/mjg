@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="form-group">
         <label for="login">Usuário ou E-mail</label>
         <div class="input-wrapper">
-          <input type="text" id="login" name="login" required placeholder="u683004893_mjg" autofocus value="<?php echo htmlspecialchars($_POST['login'] ?? ''); ?>">
+          <input type="text" id="login" name="login" required placeholder="sandro" autofocus value="<?php echo htmlspecialchars($_POST['login'] ?? ''); ?>">
         </div>
       </div>
 

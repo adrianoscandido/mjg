@@ -67,13 +67,13 @@ function initDatabase(PDO $pdo): void {
 
     // 4. Inserir usuário administrador padrão se não existir
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usuario = :u OR email = :e");
-    $stmt->execute([':u' => 'u683004893_mjg', ':e' => 'admin@mjgimports.com.br']);
+    $stmt->execute([':u' => 'sandro', ':e' => 'admin@mjgimports.com.br']);
     if ((int)$stmt->fetchColumn() === 0) {
-        $hash = password_hash('@193945+Lara@', PASSWORD_BCRYPT);
+        $hash = password_hash('grazi2027', PASSWORD_BCRYPT);
         $ins = $pdo->prepare("INSERT INTO usuarios (nome, usuario, email, senha_hash) VALUES (:nome, :u, :e, :h)");
         $ins->execute([
-            ':nome' => 'Administrador MJG',
-            ':u'    => 'u683004893_mjg',
+            ':nome' => 'Sandro',
+            ':u'    => 'sandro',
             ':e'    => 'admin@mjgimports.com.br',
             ':h'    => $hash
         ]);
