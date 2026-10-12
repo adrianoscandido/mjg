@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { HeroBanner } from "@/components/HeroBanner";
 import { WaButton } from "@/components/Layout";
-import { ADDRESS, brands, services, MAPS_DIRECTIONS_URL } from "@/lib/site";
+import { ADDRESS, brands, services as defaultServices, MAPS_DIRECTIONS_URL } from "@/lib/site";
 import loja from "@/assets/loja-mjg.jpeg";
 import acessorios from "@/assets/acessorios-mjg.jpeg";
 import { GoogleReviews } from "@/components/GoogleReviews";
@@ -20,7 +21,34 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+type ServicoCard = {
+  id?: number;
+  title: string;
+  desc: string;
+  icon: string;
+};
+
 function Index() {
+  const [serviceList, setServiceList] = useState<ServicoCard[]>(defaultServices);
+
+  useEffect(() => {
+    fetch("/api/servicos.php?t=" + Date.now(), { cache: "no-store" })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res?.ok && Array.isArray(res.dados) && res.dados.length > 0) {
+          setServiceList(
+            res.dados.map((d: any) => ({
+              id: d.id,
+              title: d.titulo,
+              desc: d.descricao,
+              icon: d.icone || "🛠️",
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       <HeroBanner />
@@ -35,8 +63,8 @@ function Index() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         <h2 className="font-display text-5xl text-primary">Nossos serviços</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {services.slice(0, 4).map((s) => (
-            <div key={s.title} className="rounded-2xl border bg-card p-6 shadow-sm">
+          {serviceList.slice(0, 8).map((s, idx) => (
+            <div key={s.id || s.title || idx} className="rounded-2xl border bg-card p-6 shadow-sm">
               <div className="text-4xl">{s.icon}</div>
               <h3 className="mt-3 text-xl font-bold">{s.title}</h3>
               <p className="mt-2 text-muted-foreground">{s.desc}</p>

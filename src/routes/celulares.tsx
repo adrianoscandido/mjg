@@ -26,7 +26,7 @@ function Celulares() {
   const [brand, setBrand] = useState("Todas");
 
   useEffect(() => {
-    fetch("/api/celulares.php")
+    fetch("/api/celulares.php?t=" + Date.now(), { cache: "no-store" })
       .then((res) => res.json())
       .then((res) => {
         if (res?.ok && Array.isArray(res.dados) && res.dados.length > 0) {

@@ -28,7 +28,7 @@ function Servicos() {
   const [items, setItems] = useState<ServicoItem[]>(defaultServices);
 
   useEffect(() => {
-    fetch("/api/servicos.php")
+    fetch("/api/servicos.php?t=" + Date.now(), { cache: "no-store" })
       .then((res) => res.json())
       .then((res) => {
         if (res?.ok && Array.isArray(res.dados) && res.dados.length > 0) {
