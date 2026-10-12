@@ -1,4 +1,4 @@
 # Atualização da página inicial
-- [ ] Melhorar a capa e adicionar as duas fotos reais.
-- [ ] Adicionar avaliações verificadas ou acesso direto às avaliações do Google.
-- [ ] Verificar fotos, troca de banners e links.
+- [x] Melhorar a capa e adicionar as duas fotos reais.
+- [x] Adicionar avaliações verificadas ou acesso direto às avaliações do Google.
+- [x] Verificar fotos, troca de banners e links.
