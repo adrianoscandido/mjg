@@ -39,7 +39,7 @@ export function HeroBanner() {
     return () => clearInterval(id);
   }, []);
 
-  const slide = slides[current];
+  const slide = slides[current % slides.length]!;
 
   return (
     <section className="relative overflow-hidden bg-primary">
