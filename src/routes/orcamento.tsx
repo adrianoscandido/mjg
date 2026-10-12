@@ -17,7 +17,7 @@ export const Route = createFileRoute("/orcamento")({
 const field = "mt-1 w-full rounded-xl border bg-card px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-ring";
 
 function Orcamento() {
-  const [f, setF] = useState({ nome: "", marca: brands[0], modelo: "", servico: services[0].title, problema: "" });
+  const [f, setF] = useState({ nome: "", marca: "Samsung", modelo: "", servico: "Troca de tela", problema: "" });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
