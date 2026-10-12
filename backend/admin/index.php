@@ -123,13 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nome = trim($_POST['nome'] ?? '');
         $logo = trim($_POST['logo'] ?? '🤝');
         $whatsapp = trim($_POST['whatsapp'] ?? '');
+        $site = trim($_POST['site'] ?? '');
         $servicosTxt = trim($_POST['servicos'] ?? '');
         $descricao = trim($_POST['descricao'] ?? '');
         $ordem = (int)($_POST['ordem'] ?? 0);
 
         if (!empty($nome) && !empty($servicosTxt)) {
-            $stmt = $pdo->prepare("INSERT INTO parceiros (nome, logo, whatsapp, servicos, descricao, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, 1)");
-            $stmt->execute([$nome, $logo, $whatsapp, $servicosTxt, $descricao, $ordem]);
+            $stmt = $pdo->prepare("INSERT INTO parceiros (nome, logo, whatsapp, site, servicos, descricao, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, 1)");
+            $stmt->execute([$nome, $logo, $whatsapp, $site, $servicosTxt, $descricao, $ordem]);
             $msg = 'Parceiro cadastrado com sucesso!';
         } else {
             $msg = 'Preencha o nome e a lista de serviços do parceiro.';
@@ -140,13 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nome = trim($_POST['nome'] ?? '');
         $logo = trim($_POST['logo'] ?? '🤝');
         $whatsapp = trim($_POST['whatsapp'] ?? '');
+        $site = trim($_POST['site'] ?? '');
         $servicosTxt = trim($_POST['servicos'] ?? '');
         $descricao = trim($_POST['descricao'] ?? '');
         $ordem = (int)($_POST['ordem'] ?? 0);
 
         if ($id > 0 && !empty($nome) && !empty($servicosTxt)) {
-            $stmt = $pdo->prepare("UPDATE parceiros SET nome = ?, logo = ?, whatsapp = ?, servicos = ?, descricao = ?, ordem = ? WHERE id = ?");
-            $stmt->execute([$nome, $logo, $whatsapp, $servicosTxt, $descricao, $ordem, $id]);
+            $stmt = $pdo->prepare("UPDATE parceiros SET nome = ?, logo = ?, whatsapp = ?, site = ?, servicos = ?, descricao = ?, ordem = ? WHERE id = ?");
+            $stmt->execute([$nome, $logo, $whatsapp, $site, $servicosTxt, $descricao, $ordem, $id]);
             $msg = 'Parceiro atualizado com sucesso!';
         } else {
             $msg = 'Preencha os campos obrigatórios do parceiro.';
@@ -895,8 +897,12 @@ if (isset($_POST['action'])) {
               <input type="text" name="logo" id="parceiro-logo" placeholder="Emoji (📹, 🎨, 🤝) ou URL da Logo" value="🤝" required>
             </div>
             <div class="form-group">
-              <label>WhatsApp / Telefone de Contato</label>
+              <label>WhatsApp / Contato</label>
               <input type="text" name="whatsapp" id="parceiro-whatsapp" placeholder="Ex: 11998037170 ou (11) 99803-7170">
+            </div>
+            <div class="form-group">
+              <label>Site do Parceiro (Link / URL)</label>
+              <input type="url" name="site" id="parceiro-site" placeholder="Ex: https://seusite.com.br">
             </div>
             <div class="form-group">
               <label>Ordem de Exibição</label>
@@ -933,7 +939,7 @@ if (isset($_POST['action'])) {
               <th style="width: 70px;">Logo</th>
               <th>Parceiro</th>
               <th>Serviços Oferecidos</th>
-              <th style="width: 140px;">Contato</th>
+              <th style="width: 170px;">Contato / Site</th>
               <th style="width: 70px;">Ordem</th>
               <th style="width: 90px;">Status</th>
               <th style="width: 190px;">Ações</th>
@@ -981,7 +987,13 @@ if (isset($_POST['action'])) {
                       <a href="https://wa.me/<?php echo $cleanWa; ?>" target="_blank" style="color:var(--success); font-weight:700; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:3px;">
                         🟢 <?php echo htmlspecialchars($p['whatsapp']); ?>
                       </a>
-                    <?php else: ?>
+                    <?php endif; ?>
+                    <?php if (!empty($p['site'])): ?>
+                      <br><a href="<?php echo htmlspecialchars($p['site']); ?>" target="_blank" rel="noopener noreferrer" style="color:var(--primary); font-size:0.8rem; text-decoration:none; display:inline-flex; align-items:center; gap:3px; margin-top:3px;">
+                        🌐 <?php echo htmlspecialchars(preg_replace('#^https?://#', '', rtrim($p['site'], '/'))); ?>
+                      </a>
+                    <?php endif; ?>
+                    <?php if (empty($p['whatsapp']) && empty($p['site'])): ?>
                       <span style="color:var(--text-muted); font-size:0.8rem;">-</span>
                     <?php endif; ?>
                   </td>
@@ -1287,6 +1299,7 @@ if (isset($_POST['action'])) {
       document.getElementById('parceiro-nome').value = parceiro.nome;
       document.getElementById('parceiro-logo').value = parceiro.logo || '🤝';
       document.getElementById('parceiro-whatsapp').value = parceiro.whatsapp || '';
+      document.getElementById('parceiro-site').value = parceiro.site || '';
       document.getElementById('parceiro-ordem').value = parceiro.ordem || '10';
       document.getElementById('parceiro-servicos').value = parceiro.servicos || '';
       document.getElementById('parceiro-descricao').value = parceiro.descricao || '';
@@ -1302,6 +1315,7 @@ if (isset($_POST['action'])) {
       document.getElementById('parceiro-nome').value = '';
       document.getElementById('parceiro-logo').value = '🤝';
       document.getElementById('parceiro-whatsapp').value = '';
+      document.getElementById('parceiro-site').value = '';
       document.getElementById('parceiro-ordem').value = '10';
       document.getElementById('parceiro-servicos').value = '';
       document.getElementById('parceiro-descricao').value = '';

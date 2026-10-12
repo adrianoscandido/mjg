@@ -147,6 +147,7 @@ function initDatabase(PDO $pdo): void {
         nome VARCHAR(120) NOT NULL,
         logo VARCHAR(255) DEFAULT '🤝',
         whatsapp VARCHAR(50) DEFAULT NULL,
+        site VARCHAR(255) DEFAULT NULL,
         servicos TEXT NOT NULL,
         descricao TEXT DEFAULT NULL,
         ordem INT DEFAULT 0,
@@ -154,6 +155,14 @@ function initDatabase(PDO $pdo): void {
         criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // Garante que a coluna site exista mesmo se a tabela já tiver sido criada antes
+    try {
+        $cols = $pdo->query("SHOW COLUMNS FROM parceiros LIKE 'site'")->fetchAll();
+        if (empty($cols)) {
+            $pdo->exec("ALTER TABLE parceiros ADD COLUMN site VARCHAR(255) DEFAULT NULL AFTER whatsapp");
+        }
+    } catch (\Exception $e) {}
 
     // Popular parceiros padrão se a tabela estiver vazia
     $stmtParceiros = $pdo->query("SELECT COUNT(*) FROM parceiros");

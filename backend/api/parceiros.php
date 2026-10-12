@@ -11,7 +11,7 @@ require_once __DIR__ . '/db.php';
 
 try {
     $pdo = getDb();
-    $stmt = $pdo->query("SELECT id, nome, logo, whatsapp, servicos, descricao, ordem, ativo FROM parceiros WHERE ativo = 1 ORDER BY ordem ASC, id ASC");
+    $stmt = $pdo->query("SELECT id, nome, logo, whatsapp, site, servicos, descricao, ordem, ativo FROM parceiros WHERE ativo = 1 ORDER BY ordem ASC, id ASC");
     $parceiros = $stmt->fetchAll();
     echo json_encode(['ok' => true, 'dados' => $parceiros], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {

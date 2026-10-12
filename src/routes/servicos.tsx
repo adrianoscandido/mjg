@@ -33,6 +33,7 @@ type ParceiroItem = {
   nome: string;
   logo: string;
   whatsapp?: string;
+  site?: string;
   servicos: string;
   descricao?: string;
   ordem?: number;
@@ -44,6 +45,7 @@ const defaultParceiros: ParceiroItem[] = [
     nome: "Rede Tech & CFTV São Roque",
     logo: "📹",
     whatsapp: "11998037170",
+    site: "https://redetechcftv.com.br",
     servicos: "Câmeras de Segurança (CFTV), Instalação de Redes Wi-Fi, Cabeamento Estruturado, Alarmes Residenciais e Comerciais",
     descricao: "Especialista em segurança eletrônica, monitoramento e infraestrutura de alta performance para residências e comércios.",
   },
@@ -52,6 +54,7 @@ const defaultParceiros: ParceiroItem[] = [
     nome: "Gráfica & Películas Express",
     logo: "🎨",
     whatsapp: "11998037170",
+    site: "https://graficaexpress.com.br",
     servicos: "Películas de Alta Proteção Personalizadas, Capinhas Customizadas com Foto, Adesivos Resinados, Brindes e Gráfica Rápida",
     descricao: "Personalização de ponta e impressões de alta fidelidade com acabamento profissional e durabilidade.",
   },
@@ -194,19 +197,32 @@ function Servicos() {
                     </div>
                   </div>
 
-                  {/* Botão de Contato Direto */}
-                  <div className="mt-6 border-t border-border/60 pt-4 flex items-center justify-between gap-3">
+                  {/* Botões de Ação: Site do Parceiro e WhatsApp */}
+                  <div className="mt-6 border-t border-border/60 pt-4 flex flex-wrap items-center justify-between gap-3">
                     <span className="text-xs text-muted-foreground">
-                      Parceria com garantia de indicação MJG
+                      Parceria com indicação MJG
                     </span>
-                    <a
-                      href={waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-green-700 active:scale-95 transition-all"
-                    >
-                      <span>💬</span> Falar com Parceiro
-                    </a>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {p.site && (
+                        <a
+                          href={p.site.startsWith("http") ? p.site : `https://${p.site}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-primary/40 bg-primary/10 px-3.5 py-2 text-sm font-bold text-primary hover:bg-primary/20 active:scale-95 transition-all"
+                          title={`Visitar site oficial de ${p.nome}`}
+                        >
+                          <span>🌐</span> Acessar Site
+                        </a>
+                      )}
+                      <a
+                        href={waLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-green-700 active:scale-95 transition-all"
+                      >
+                        <span>💬</span> WhatsApp
+                      </a>
+                    </div>
                   </div>
                 </div>
               );
