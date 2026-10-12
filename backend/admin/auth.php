@@ -24,8 +24,8 @@ function requireAuth(): void {
 
 function loginUser(string $login, string $senha): array {
     $pdo = getDb();
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = :login OR email = :login LIMIT 1");
-    $stmt->execute([':login' => $login]);
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = :usuario OR email = :email LIMIT 1");
+    $stmt->execute([':usuario' => $login, ':email' => $login]);
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($senha, $user['senha_hash'])) {
