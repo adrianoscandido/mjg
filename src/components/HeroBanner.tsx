@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ChevronLeft, ChevronRight, MessageCircle, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import loja from "@/assets/loja-mjg.jpeg.asset.json";
-import acessorios from "@/assets/acessorios-mjg.jpeg.asset.json";
+import loja from "@/assets/loja-mjg.jpeg";
+import acessorios from "@/assets/acessorios-mjg.jpeg";
 import bannerTela from "@/assets/banner-tela.jpg";
 import bannerBateria from "@/assets/banner-bateria.jpg";
 import bannerConector from "@/assets/banner-conector.jpg";
@@ -11,7 +11,7 @@ import { WaButton } from "@/components/Layout";
 
 const slides = [
   {
-    img: loja.url,
+    img: loja,
     tag: "Assistência técnica em São Roque",
     title: "Seu celular em boas mãos.",
     desc: "Conserto de celulares, aparelhos novos e seminovos e acessórios. Fale com a MJG e peça seu orçamento.",
@@ -39,7 +39,7 @@ const slides = [
     waMsg: "Olá! Meu celular não carrega direito, gostaria de um orçamento para o conserto do conector.",
   },
   {
-    img: acessorios.url,
+    img: acessorios,
     tag: "Capinhas e acessórios",
     title: "Proteção com a sua cara.",
     desc: "Capinhas, películas, cabos e carregadores. Consulte as opções para o seu modelo pelo WhatsApp.",

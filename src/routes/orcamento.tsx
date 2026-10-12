@@ -19,11 +19,19 @@ export const Route = createFileRoute("/orcamento")({
 const field = "mt-1 w-full rounded-xl border bg-card px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-ring";
 
 function Orcamento() {
-  const [f, setF] = useState({ nome: "", marca: "Samsung", modelo: "", servico: "Troca de tela", problema: "" });
+  const [f, setF] = useState({ nome: "", telefone: "", marca: "Samsung", modelo: "", servico: "Troca de tela", problema: "" });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Olá! Meu nome é ${f.nome}.\nGostaria de um orçamento:\nAparelho: ${f.marca} ${f.modelo}\nServiço: ${f.servico}\nProblema: ${f.problema}`;
+    try {
+      fetch("/api/orcamento.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(f),
+      }).catch(() => {});
+    } catch {}
+    const telInfo = f.telefone ? `\nContato: ${f.telefone}` : "";
+    const msg = `Olá! Meu nome é ${f.nome}.${telInfo}\nGostaria de um orçamento:\nAparelho: ${f.marca} ${f.modelo}\nServiço: ${f.servico}\nProblema: ${f.problema}`;
     window.open(waLink(msg), "_blank");
   };
   return (
@@ -31,11 +39,12 @@ function Orcamento() {
       <h1 className="font-display text-6xl text-primary">Orçamento</h1>
       <p className="mt-2 text-muted-foreground">Preencha e envie direto pelo WhatsApp.</p>
       <form onSubmit={submit} className="mt-8 space-y-4">
-        <label className="block font-semibold">Seu nome<input required className={field} value={f.nome} onChange={set("nome")} /></label>
+        <label className="block font-semibold">Seu nome<input required className={field} value={f.nome} onChange={set("nome")} placeholder="Seu nome completo" /></label>
+        <label className="block font-semibold">Seu WhatsApp / Telefone<input className={field} value={f.telefone} onChange={set("telefone")} placeholder="(11) 99999-9999" /></label>
         <label className="block font-semibold">Marca<select className={field} value={f.marca} onChange={set("marca")}>{[...brands, "Outra"].map((b) => <option key={b}>{b}</option>)}</select></label>
         <label className="block font-semibold">Modelo<input required placeholder="Ex: Galaxy A32, iPhone 11" className={field} value={f.modelo} onChange={set("modelo")} /></label>
         <label className="block font-semibold">Serviço<select className={field} value={f.servico} onChange={set("servico")}>{[...services.map((s) => s.title), "Não sei"].map((s) => <option key={s}>{s}</option>)}</select></label>
-        <label className="block font-semibold">Descreva o problema<textarea rows={4} className={field} value={f.problema} onChange={set("problema")} /></label>
+        <label className="block font-semibold">Descreva o problema<textarea rows={4} className={field} value={f.problema} onChange={set("problema")} placeholder="Conte o que aconteceu com o aparelho..." /></label>
         <button type="submit" className="w-full rounded-xl bg-accent py-4 text-lg font-bold text-accent-foreground shadow-glow hover:brightness-110">💬 Enviar pelo WhatsApp</button>
       </form>
     </section>

@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HeroBanner } from "@/components/HeroBanner";
 import { WaButton } from "@/components/Layout";
 import { ADDRESS, brands, services } from "@/lib/site";
-import loja from "@/assets/loja-mjg.jpeg.asset.json";
-import acessorios from "@/assets/acessorios-mjg.jpeg.asset.json";
+import loja from "@/assets/loja-mjg.jpeg";
+import acessorios from "@/assets/acessorios-mjg.jpeg";
 import { GoogleReviews } from "@/components/GoogleReviews";
 
 export const Route = createFileRoute("/")({
@@ -62,11 +62,11 @@ function Index() {
         <p className="mt-3 max-w-xl text-muted-foreground">Sua assistência técnica e loja de acessórios em {ADDRESS}. Venha conhecer a gente.</p>
         <div className="mt-8 grid grid-cols-2 gap-3 md:gap-6">
           <figure>
-            <img src={loja.url} alt="Entrada da loja MJG Assistech & Imports em São Roque" loading="lazy" width={768} height={1366} className="aspect-[3/4] w-full rounded-lg object-cover" />
+            <img src={loja} alt="Entrada da loja MJG Assistech & Imports em São Roque" loading="lazy" width={768} height={1366} className="aspect-[3/4] w-full rounded-lg object-cover" />
             <figcaption className="mt-3 font-semibold">Nossa loja</figcaption>
           </figure>
           <figure>
-            <img src={acessorios.url} alt="Capinhas de diferentes cores disponíveis na loja MJG" loading="lazy" width={768} height={1366} className="aspect-[3/4] w-full rounded-lg object-cover" />
+            <img src={acessorios} alt="Capinhas de diferentes cores disponíveis na loja MJG" loading="lazy" width={768} height={1366} className="aspect-[3/4] w-full rounded-lg object-cover" />
             <figcaption className="mt-3 font-semibold">Capinhas e acessórios</figcaption>
           </figure>
         </div>

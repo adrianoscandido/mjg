@@ -50,7 +50,11 @@ export function Layout({ children }: { children: ReactNode }) {
           <div><p className="font-bold">WhatsApp</p><a href={waLink("Olá! Vim pelo site.")} className="text-accent-bright">{PHONE_DISPLAY}</a></div>
           <div><p className="font-bold">Endereço</p><p className="text-primary-foreground/80">{ADDRESS}</p></div>
         </div>
-        <div className="bg-accent py-3 text-center text-sm text-accent-foreground">© {new Date().getFullYear()} MJG Assistech & Imports</div>
+        <div className="bg-accent py-3 text-center text-sm text-accent-foreground flex items-center justify-center gap-3">
+          <span>© {new Date().getFullYear()} MJG Assistech & Imports</span>
+          <span>·</span>
+          <a href="/admin" className="underline hover:opacity-80 font-medium">Área Administrativa</a>
+        </div>
       </footer>
       <a href={waLink("Olá! Gostaria de um orçamento.")} target="_blank" rel="noreferrer" aria-label="WhatsApp"
         className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-accent px-5 py-4 font-bold text-accent-foreground shadow-glow transition hover:scale-105">
