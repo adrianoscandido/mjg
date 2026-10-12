@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep homepage carousel content in HeroBanner and uploaded media in asset pointers so photos and their service messages stay paired without embedding binary files.
+- GoogleReviews displays a dated public snapshot with a link to live Google reviews; do not represent static review data as automatically synchronized or invent missing author names.

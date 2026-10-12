@@ -4,6 +4,7 @@ import { WaButton } from "@/components/Layout";
 import { ADDRESS, brands, services } from "@/lib/site";
 import loja from "@/assets/loja-mjg.jpeg.asset.json";
 import acessorios from "@/assets/acessorios-mjg.jpeg.asset.json";
+import { GoogleReviews } from "@/components/GoogleReviews";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,6 +53,8 @@ function Index() {
           ))}
         </div>
       </section>
+
+      <GoogleReviews />
 
       <section className="mx-auto max-w-6xl px-4 py-16">
         <p className="text-sm font-bold uppercase text-accent">Aqui em São Roque</p>
