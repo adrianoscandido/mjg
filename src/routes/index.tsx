@@ -18,18 +18,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <>
-      <section className="relative overflow-hidden bg-primary">
-        <img src={hero} alt="Técnico consertando celular" width={1280} height={960} className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-32">
-          <p className="font-bold uppercase tracking-widest text-accent-bright">Assistência técnica de celulares</p>
-          <h1 className="mt-3 max-w-2xl font-display text-6xl leading-none text-primary-foreground md:text-8xl">Seu celular de volta em perfeitas condições</h1>
-          <p className="mt-5 max-w-xl text-lg text-primary-foreground/85">Tela, bateria, conector, placa e desbloqueio. Também vendemos celulares novos e seminovos.</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <WaButton msg="Olá! Gostaria de um orçamento para meu celular.">💬 Pedir orçamento no WhatsApp</WaButton>
-            <Link to="/celulares" className="inline-flex items-center justify-center rounded-xl border-2 border-primary-foreground/40 px-6 py-4 text-lg font-bold text-primary-foreground hover:bg-primary-foreground/10">Ver celulares à venda</Link>
-          </div>
-        </div>
-      </section>
+      <HeroBanner />
 
       <section className="border-b bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-6">
