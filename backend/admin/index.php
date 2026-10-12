@@ -468,6 +468,78 @@ if (isset($_POST['action'])) {
       border-color: var(--primary);
       box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
     }
+    /* Icon Picker Styles */
+    .icon-picker-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+    .icon-picker-top {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .icon-preview {
+      width: 52px;
+      height: 52px;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(56, 189, 248, 0.15);
+      border: 2px solid var(--primary);
+      border-radius: 0.75rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+      transition: all 0.2s ease;
+    }
+    .icon-palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+      gap: 0.45rem;
+      max-height: 190px;
+      overflow-y: auto;
+      padding: 0.4rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      background: rgba(0, 0, 0, 0.25);
+    }
+    .icon-opt {
+      font-size: 1.5rem;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .icon-opt:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--primary);
+      transform: scale(1.15);
+    }
+    .icon-opt.selected {
+      background: rgba(56, 189, 248, 0.35);
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      transform: scale(1.08);
+    }
+    .icon-category-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -638,19 +710,42 @@ if (isset($_POST['action'])) {
           <input type="hidden" name="action" id="servico-action" value="novo_servico">
           <input type="hidden" name="id" id="servico-id" value="">
           <div class="form-grid">
-            <div class="form-group">
+            <div class="form-group" style="grid-column: span 2;">
               <label>Título do Serviço</label>
               <input type="text" name="titulo" id="servico-titulo" placeholder="Ex: Troca de Tela, Reparo de Placa" required>
-            </div>
-            <div class="form-group">
-              <label>Ícone / Emoji</label>
-              <input type="text" name="icone" id="servico-icone" placeholder="Ex: 📱, 🔋, 🔌, 🛠️, 🔓, ⚙️" value="📱" required>
             </div>
             <div class="form-group">
               <label>Ordem de Exibição</label>
               <input type="number" name="ordem" id="servico-ordem" value="10" min="0" required>
             </div>
           </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Escolher Ícone do Serviço (Clique no ícone desejado)</label>
+            <div class="icon-picker-box">
+              <div class="icon-picker-top">
+                <div class="icon-preview" id="icon-preview-display">📱</div>
+                <div style="flex: 1; min-width: 200px;">
+                  <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">
+                    Ícone Selecionado: <span id="icon-name-display" style="color: var(--primary);">Smartphone / Celular</span>
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">
+                    Clique em um dos ícones pré-carregados abaixo para selecioná-lo imediatamente:
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.35rem 0.65rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06);">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Manual:</span>
+                  <input type="text" name="icone" id="servico-icone" value="📱" style="width: 55px; text-align: center; font-size: 1.3rem; padding: 0.35rem; background: rgba(15,23,42,0.9);" oninput="atualizarIconeManualmente(this.value)" required>
+                </div>
+              </div>
+
+              <div class="icon-category-label">Galeria de Ícones Pré-carregados (Assistência Técnica, Acessórios e Celulares):</div>
+              <div class="icon-palette" id="icon-palette-container">
+                <!-- Populado automaticamente pelo JavaScript -->
+              </div>
+            </div>
+          </div>
+
           <div class="form-group" style="margin-top: 1rem;">
             <label>Descrição Detalhada</label>
             <textarea name="descricao" id="servico-descricao" rows="3" placeholder="Descreva o serviço oferecido aos clientes..." required></textarea>
@@ -864,14 +959,108 @@ if (isset($_POST['action'])) {
       if (activeContent) activeContent.classList.add('active');
     }
 
+    const PRELOADED_ICONS = [
+      { icon: '📱', name: 'Smartphone / Celular' },
+      { icon: '📲', name: 'Tela / Chamada' },
+      { icon: '🔋', name: 'Bateria / Carga' },
+      { icon: '⚡', name: 'Carregador Rápido' },
+      { icon: '🔌', name: 'Conector de Carga / Cabo' },
+      { icon: '🪫', name: 'Bateria Baixa' },
+      { icon: '🛠️', name: 'Ferramentas / Manutenção' },
+      { icon: '🔧', name: 'Reparo / Chave' },
+      { icon: '⚙️', name: 'Engrenagem / Ajustes' },
+      { icon: '🪛', name: 'Técnico / Chave de Fenda' },
+      { icon: '🔨', name: 'Reforma / Martelo' },
+      { icon: '🔓', name: 'Desbloqueio' },
+      { icon: '🔒', name: 'Bloqueio / Segurança' },
+      { icon: '🛡️', name: 'Película / Proteção' },
+      { icon: '🔑', name: 'Chave / Acesso' },
+      { icon: '💧', name: 'Água / Banho Químico' },
+      { icon: '🧼', name: 'Limpeza Interna' },
+      { icon: '📷', name: 'Câmera Traseira' },
+      { icon: '📸', name: 'Câmera Frontal / Foto' },
+      { icon: '🔊', name: 'Alto-Falante / Som' },
+      { icon: '🎙️', name: 'Microfone' },
+      { icon: '🎧', name: 'Fone de Ouvido' },
+      { icon: '💻', name: 'Reparo de Placa / Notebook' },
+      { icon: '🖥️', name: 'Display / Monitor' },
+      { icon: '💾', name: 'Memória / Backup' },
+      { icon: '🔍', name: 'Diagnóstico Técnico' },
+      { icon: '💎', name: 'Peças Premium / Originais' },
+      { icon: '🏷️', name: 'Oferta / Promoção' },
+      { icon: '🛍️', name: 'Acessórios / Compras' },
+      { icon: '📦', name: 'Envio / Aparelhos' },
+      { icon: '💼', name: 'Capinhas / Executivo' },
+      { icon: '✨', name: 'Celular Novo / Cristalino' },
+      { icon: '🚀', name: 'Conserto Rápido / Express' },
+      { icon: '⏱️', name: 'Pontualidade' },
+      { icon: '💬', name: 'Atendimento WhatsApp' },
+      { icon: '📍', name: 'Loja Física São Roque' }
+    ];
+
+    function renderizarIconPalette() {
+      const container = document.getElementById('icon-palette-container');
+      if (!container) return;
+      container.innerHTML = '';
+      const iconeAtual = (document.getElementById('servico-icone')?.value || '📱').trim();
+
+      PRELOADED_ICONS.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'icon-opt' + (item.icon === iconeAtual ? ' selected' : '');
+        btn.title = item.name + ' (' + item.icon + ')';
+        btn.textContent = item.icon;
+        btn.onclick = () => selecionarIcone(item.icon, item.name);
+        container.appendChild(btn);
+      });
+    }
+
+    function selecionarIcone(icone, nome) {
+      icone = (icone || '📱').trim();
+      const input = document.getElementById('servico-icone');
+      const preview = document.getElementById('icon-preview-display');
+      const nameDisplay = document.getElementById('icon-name-display');
+      if (input) input.value = icone;
+      if (preview) preview.textContent = icone;
+      if (nameDisplay) {
+        if (!nome) {
+          const match = PRELOADED_ICONS.find(i => i.icon === icone);
+          nome = match ? match.name : 'Personalizado';
+        }
+        nameDisplay.textContent = nome;
+      }
+
+      document.querySelectorAll('.icon-opt').forEach(opt => {
+        if (opt.textContent.trim() === icone) {
+          opt.classList.add('selected');
+        } else {
+          opt.classList.remove('selected');
+        }
+      });
+    }
+
+    function atualizarIconeManualmente(icone) {
+      icone = (icone || '📱').trim();
+      const preview = document.getElementById('icon-preview-display');
+      const nameDisplay = document.getElementById('icon-name-display');
+      if (preview) preview.textContent = icone;
+      if (nameDisplay) {
+        const match = PRELOADED_ICONS.find(i => i.icon === icone);
+        nameDisplay.textContent = match ? match.name : 'Personalizado';
+      }
+      document.querySelectorAll('.icon-opt').forEach(opt => {
+        opt.classList.toggle('selected', opt.textContent.trim() === icone);
+      });
+    }
+
     function prepararEdicaoServico(servico) {
       document.getElementById('form-servico-title').textContent = 'Editar Serviço: ' + servico.titulo;
       document.getElementById('servico-action').value = 'editar_servico';
       document.getElementById('servico-id').value = servico.id;
       document.getElementById('servico-titulo').value = servico.titulo;
-      document.getElementById('servico-icone').value = servico.icone || '📱';
       document.getElementById('servico-ordem').value = servico.ordem;
       document.getElementById('servico-descricao').value = servico.descricao;
+      selecionarIcone(servico.icone || '📱');
       document.getElementById('btn-servico-submit').textContent = '💾 Atualizar Serviço';
       document.getElementById('btn-servico-cancel').style.display = 'inline-block';
       document.getElementById('form-servico').scrollIntoView({ behavior: 'smooth' });
@@ -882,12 +1071,15 @@ if (isset($_POST['action'])) {
       document.getElementById('servico-action').value = 'novo_servico';
       document.getElementById('servico-id').value = '';
       document.getElementById('servico-titulo').value = '';
-      document.getElementById('servico-icone').value = '📱';
       document.getElementById('servico-ordem').value = '10';
       document.getElementById('servico-descricao').value = '';
+      selecionarIcone('📱', 'Smartphone / Celular');
       document.getElementById('btn-servico-submit').textContent = '+ Salvar Serviço';
       document.getElementById('btn-servico-cancel').style.display = 'none';
     }
+
+    // Inicializa a galeria de ícones pré-carregados ao abrir a página
+    renderizarIconPalette();
   </script>
 </body>
 </html>
