@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, ChevronLeft, ChevronRight, MessageCircle, Pause, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import loja from "@/assets/loja-mjg.jpeg.asset.json";
+import acessorios from "@/assets/acessorios-mjg.jpeg.asset.json";
 import bannerTela from "@/assets/banner-tela.jpg";
 import bannerBateria from "@/assets/banner-bateria.jpg";
 import bannerConector from "@/assets/banner-conector.jpg";
 import { WaButton } from "@/components/Layout";
 
 const slides = [
+  {
+    img: loja.url,
+    tag: "Assistência técnica em São Roque",
+    title: "Seu celular em boas mãos.",
+    desc: "Conserto de celulares, aparelhos novos e seminovos e acessórios. Fale com a MJG e peça seu orçamento.",
+    waMsg: "Olá! Vim pelo site da MJG e gostaria de um orçamento.",
+  },
   {
     img: bannerTela,
     tag: "Troca de tela",
@@ -27,64 +38,80 @@ const slides = [
     desc: "Conector de carga frouxo ou sem funcionar? Reparamos e trocamos o conector do seu aparelho.",
     waMsg: "Olá! Meu celular não carrega direito, gostaria de um orçamento para o conserto do conector.",
   },
+  {
+    img: acessorios.url,
+    tag: "Capinhas e acessórios",
+    title: "Proteção com a sua cara.",
+    desc: "Capinhas, películas, cabos e carregadores. Consulte as opções para o seu modelo pelo WhatsApp.",
+    waMsg: "Olá! Gostaria de conhecer os acessórios disponíveis para meu celular.",
+  },
 ];
 
 const INTERVAL = 5000;
 
 export function HeroBanner() {
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => setCurrent((c) => (c + 1) % slides.length), INTERVAL);
     return () => clearInterval(id);
-  }, []);
+  }, [paused]);
 
-  const slide = slides[current % slides.length]!;
+  const slide = slides[current % slides.length];
+  if (!slide) return null;
 
   return (
-    <section className="relative overflow-hidden bg-primary">
+    <section aria-roledescription="carrossel" aria-label="MJG: loja e serviços" className="relative isolate overflow-hidden bg-primary">
       {slides.map((s, i) => (
         <img
           key={s.tag}
           src={s.img}
-          alt={s.tag}
-          width={1600}
-          height={912}
+          alt={i === 0 ? "Fachada da MJG Assistech & Imports" : s.tag}
           loading={i === 0 ? "eager" : "lazy"}
           className={
-            "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 " +
-            (i === current ? "opacity-40" : "opacity-0")
+            "absolute inset-0 h-full w-full object-cover object-[center_35%] transition-opacity duration-700 motion-reduce:transition-none " +
+            (i === current ? "opacity-100" : "opacity-0")
           }
         />
       ))}
-      <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-32">
-        <p className="font-bold uppercase tracking-widest text-accent-bright">
+      <div className="absolute inset-0 bg-hero-shade" />
+      <div className="relative mx-auto max-w-6xl px-5 py-12 md:py-16">
+        <p className="mb-6 font-display text-2xl text-primary-foreground">MJG <span className="text-accent-bright">Assistech & Imports</span></p>
+        <p className="text-sm font-bold uppercase text-accent-bright">
           {slide.tag}
         </p>
-        <h1 key={slide.tag} className="mt-3 max-w-2xl font-display text-6xl leading-none text-primary-foreground md:text-8xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <h1 className="mt-3 min-h-[144px] max-w-xl font-display text-5xl leading-none text-primary-foreground sm:min-h-[144px] sm:text-7xl md:min-h-[160px] md:text-8xl">
           {slide.title}
         </h1>
-        <p key={slide.desc} className="mt-5 max-w-xl text-lg text-primary-foreground/85 animate-in fade-in duration-700">
+        <p className="mt-4 min-h-[84px] max-w-md text-base leading-7 text-primary-foreground/90 sm:text-lg">
           {slide.desc}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <WaButton msg={slide.waMsg}>💬 Pedir orçamento no WhatsApp</WaButton>
-          <Link to="/celulares" className="inline-flex items-center justify-center rounded-xl border-2 border-primary-foreground/40 px-6 py-4 text-lg font-bold text-primary-foreground hover:bg-primary-foreground/10">
-            Ver celulares à venda
-          </Link>
+          <WaButton msg={slide.waMsg}><MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Pedir orçamento</WaButton>
+          <Button asChild variant="outline" className="h-auto rounded-lg border-primary-foreground/40 bg-transparent px-5 py-4 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+            <Link to="/celulares">Celulares à venda <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
+          </Button>
         </div>
-        <div className="mt-10 flex gap-2">
+        <div className="mt-8 flex items-center gap-2">
+          <Button size="icon" variant="ghost" aria-label="Banner anterior" title="Banner anterior" onClick={() => setCurrent((c) => (c - 1 + slides.length) % slides.length)} className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"><ChevronLeft /></Button>
           {slides.map((s, i) => (
-            <button
+            <Button
+              size="icon"
+              variant="ghost"
               key={s.tag}
               aria-label={`Ver banner: ${s.tag}`}
+              aria-pressed={i === current}
+              title={s.tag}
               onClick={() => setCurrent(i)}
               className={
-                "h-2.5 rounded-full transition-all duration-300 " +
-                (i === current ? "w-10 bg-accent-bright" : "w-3 bg-primary-foreground/40 hover:bg-primary-foreground/60")
+                "h-8 w-8 rounded-full hover:bg-primary-foreground/10 "
               }
-            />
+            ><span className={"h-2 w-2 rounded-full " + (i === current ? "bg-accent-bright" : "bg-primary-foreground/40")} /></Button>
           ))}
+          <Button size="icon" variant="ghost" aria-label="Próximo banner" title="Próximo banner" onClick={() => setCurrent((c) => (c + 1) % slides.length)} className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"><ChevronRight /></Button>
+          <Button size="icon" variant="ghost" aria-label={paused ? "Retomar banners" : "Pausar banners"} title={paused ? "Retomar banners" : "Pausar banners"} onClick={() => setPaused((p) => !p)} className="ml-1 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">{paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}</Button>
         </div>
       </div>
     </section>

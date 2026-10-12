@@ -9,6 +9,8 @@ export const Route = createFileRoute("/servicos")({
       { name: "description", content: "Troca de tela, bateria e conector, reparo de placa, desbloqueio e manutenção de celulares em São Roque." },
       { property: "og:title", content: "Serviços de conserto de celular | MJG" },
       { property: "og:description", content: "Todos os serviços de assistência técnica para Samsung, Apple, Motorola, Xiaomi e LG." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Servicos,

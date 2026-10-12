@@ -9,6 +9,8 @@ export const Route = createFileRoute("/contato")({
       { name: "description", content: "WhatsApp (11) 99803-7170 · Vila Nova – São Roque. Fale com a MJG Assistech & Imports." },
       { property: "og:title", content: "Contato | MJG Assistech & Imports" },
       { property: "og:description", content: "Fale conosco pelo WhatsApp ou visite nossa loja em São Roque." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Contato,

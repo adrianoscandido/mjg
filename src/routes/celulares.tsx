@@ -10,6 +10,8 @@ export const Route = createFileRoute("/celulares")({
       { name: "description", content: "Compre celulares novos e seminovos Apple, Samsung, Motorola e Xiaomi em São Roque." },
       { property: "og:title", content: "Celulares à venda | MJG Imports" },
       { property: "og:description", content: "Aparelhos novos e seminovos com atendimento pelo WhatsApp." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Celulares,

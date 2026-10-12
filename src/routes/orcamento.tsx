@@ -9,6 +9,8 @@ export const Route = createFileRoute("/orcamento")({
       { name: "description", content: "Peça orçamento de conserto do seu celular pelo WhatsApp em poucos segundos." },
       { property: "og:title", content: "Orçamento de conserto de celular | MJG" },
       { property: "og:description", content: "Informe marca, modelo e problema e receba o valor pelo WhatsApp." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Orcamento,
