@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import hero from "@/assets/hero-reparo.jpg";
+import { createFileRoute } from "@tanstack/react-router";
+import { HeroBanner } from "@/components/HeroBanner";
 import { WaButton } from "@/components/Layout";
 import { ADDRESS, brands, services } from "@/lib/site";
 
