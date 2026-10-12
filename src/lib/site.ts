@@ -1,8 +1,10 @@
 export const WHATSAPP = "5511998037170";
 export const PHONE_DISPLAY = "(11) 99803-7170";
-export const ADDRESS = "Vila Nova – São Roque, SP";
-export const MAPS_CID = "16599107455903459186";
+export const ADDRESS = "Av. Jaboticabal, 347 – Vila Nova, São Roque - SP, 18131-225";
+export const ADDRESS_SHORT = "Av. Jaboticabal, 347 – Vila Nova, São Roque";
+export const MAPS_CID = "8840866417741061658";
 export const MAPS_URL = `https://www.google.com/maps?cid=${MAPS_CID}`;
+export const MAPS_DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=MJG+Assist%C3%AAncia+T%C3%A9cnica+de+Celulares,+Av.+Jaboticabal,+347+-+Vila+Nova,+S%C3%A3o+Roque+-+SP`;
 export const MAPS_EMBED_URL = `https://maps.google.com/maps?cid=${MAPS_CID}&output=embed`;
 
 export const waLink = (msg: string) =>

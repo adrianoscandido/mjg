@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, ChevronLeft, ChevronRight, MessageCircle, Pause, Play } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, MapPin, MessageCircle, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import loja from "@/assets/loja-mjg.jpeg";
 import acessorios from "@/assets/acessorios-mjg.jpeg";
@@ -8,6 +8,7 @@ import bannerTela from "@/assets/banner-tela.jpg";
 import bannerBateria from "@/assets/banner-bateria.jpg";
 import bannerConector from "@/assets/banner-conector.jpg";
 import { WaButton } from "@/components/Layout";
+import { MAPS_DIRECTIONS_URL } from "@/lib/site";
 
 const slides = [
   {
@@ -88,8 +89,17 @@ export function HeroBanner() {
         <p className="mt-4 min-h-[84px] max-w-md text-base leading-7 text-primary-foreground/90 sm:text-lg">
           {slide.desc}
         </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <WaButton msg={slide.waMsg}><MessageCircle className="mr-2 h-5 w-5 shrink-0" /> Pedir orçamento</WaButton>
+          <a
+            href={MAPS_DIRECTIONS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-4 text-base font-bold text-accent-foreground shadow-glow transition hover:brightness-110"
+            title="Abrir GPS e traçar rota até a loja MJG"
+          >
+            <MapPin className="h-5 w-5 text-accent-foreground shrink-0" /> Como Chegar (GPS)
+          </a>
           <Button asChild variant="outline" className="h-auto rounded-lg border-primary-foreground/40 bg-transparent px-5 py-4 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
             <Link to="/celulares">Celulares à venda <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
           </Button>

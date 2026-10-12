@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HeroBanner } from "@/components/HeroBanner";
 import { WaButton } from "@/components/Layout";
-import { ADDRESS, brands, services } from "@/lib/site";
+import { ADDRESS, brands, services, MAPS_DIRECTIONS_URL } from "@/lib/site";
 import loja from "@/assets/loja-mjg.jpeg";
 import acessorios from "@/assets/acessorios-mjg.jpeg";
 import { GoogleReviews } from "@/components/GoogleReviews";
@@ -59,7 +59,17 @@ function Index() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         <p className="text-sm font-bold uppercase text-accent">Aqui em São Roque</p>
         <h2 className="mt-2 font-display text-5xl text-primary">Conheça a MJG</h2>
-        <p className="mt-3 max-w-xl text-muted-foreground">Sua assistência técnica e loja de acessórios em {ADDRESS}. Venha conhecer a gente.</p>
+        <p className="mt-3 max-w-xl text-muted-foreground">Sua assistência técnica e loja de acessórios na {ADDRESS}. Venha conhecer a gente.</p>
+        <div className="mt-3">
+          <a
+            href={MAPS_DIRECTIONS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 font-bold text-accent hover:underline"
+          >
+            📍 Como Chegar via GPS (Google Maps) →
+          </a>
+        </div>
         <div className="mt-8 grid grid-cols-2 gap-3 md:gap-6">
           <figure>
             <img src={loja} alt="Entrada da loja MJG Assistech & Imports em São Roque" loading="lazy" width={768} height={1366} className="aspect-[3/4] w-full rounded-lg object-cover" />
