@@ -1,6 +1,9 @@
 export const WHATSAPP = "5511998037170";
 export const PHONE_DISPLAY = "(11) 99803-7170";
 export const ADDRESS = "Vila Nova – São Roque, SP";
+export const MAPS_CID = "16599107455903459186";
+export const MAPS_URL = `https://www.google.com/maps?cid=${MAPS_CID}`;
+export const MAPS_EMBED_URL = `https://maps.google.com/maps?cid=${MAPS_CID}&output=embed`;
 
 export const waLink = (msg: string) =>
   `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;

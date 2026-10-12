@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { WaButton } from "@/components/Layout";
-import { ADDRESS, PHONE_DISPLAY } from "@/lib/site";
+import { ADDRESS, PHONE_DISPLAY, MAPS_URL, MAPS_EMBED_URL } from "@/lib/site";
+import { MapPin, Navigation } from "lucide-react";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -26,10 +27,34 @@ function Contato() {
           <p><strong>Endereço:</strong> {ADDRESS}</p>
           <p><strong>Horário:</strong> Segunda a sábado (confirme pelo WhatsApp)</p>
         </div>
-        <div className="mt-8"><WaButton msg="Olá! Vim pelo site.">💬 Chamar no WhatsApp</WaButton></div>
+        <div className="mt-8 flex flex-wrap gap-4">
+          <WaButton msg="Olá! Vim pelo site.">💬 Chamar no WhatsApp</WaButton>
+          <a
+            href={MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary px-5 py-4 font-bold text-primary transition hover:bg-primary hover:text-primary-foreground"
+          >
+            <Navigation className="h-5 w-5" /> Abrir no Google Maps
+          </a>
+        </div>
       </div>
-      <iframe title="Mapa" className="h-80 w-full rounded-2xl border md:h-full" loading="lazy"
-        src="https://www.google.com/maps?q=Vila+Nova,+S%C3%A3o+Roque,+SP&output=embed" />
+      <div className="flex flex-col gap-2">
+        <iframe
+          title="Localização MJG Assistência Técnica no Google Maps"
+          className="h-80 w-full rounded-2xl border md:h-full min-h-[350px]"
+          loading="lazy"
+          src={MAPS_EMBED_URL}
+        />
+        <a
+          href={MAPS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
+        >
+          <MapPin className="h-4 w-4" /> Ver perfil da MJG no Google Maps (ID: 16599107455903459186)
+        </a>
+      </div>
     </section>
   );
 }

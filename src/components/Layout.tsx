@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { ADDRESS, PHONE_DISPLAY, waLink } from "@/lib/site";
+import { ADDRESS, PHONE_DISPLAY, waLink, MAPS_URL } from "@/lib/site";
 
 const nav = [
   { to: "/", label: "Início" },
@@ -48,7 +48,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 md:grid-cols-3">
           <Logo />
           <div><p className="font-bold">WhatsApp</p><a href={waLink("Olá! Vim pelo site.")} className="text-accent-bright">{PHONE_DISPLAY}</a></div>
-          <div><p className="font-bold">Endereço</p><p className="text-primary-foreground/80">{ADDRESS}</p></div>
+          <div><p className="font-bold">Endereço</p><a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="text-primary-foreground/80 hover:text-accent-bright transition-colors">📍 {ADDRESS}</a></div>
         </div>
         <div className="bg-accent py-3 text-center text-sm text-accent-foreground flex items-center justify-center gap-3">
           <span>© {new Date().getFullYear()} MJG Assistech & Imports</span>
