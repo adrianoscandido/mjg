@@ -6,12 +6,16 @@ import { MapPin, Navigation } from "lucide-react";
 export const Route = createFileRoute("/contato")({
   head: () => ({
     meta: [
-      { title: "Contato | MJG Assistech & Imports" },
-      { name: "description", content: "WhatsApp (11) 99803-7170 · Vila Nova – São Roque. Fale com a MJG Assistech & Imports." },
-      { property: "og:title", content: "Contato | MJG Assistech & Imports" },
-      { property: "og:description", content: "Fale conosco pelo WhatsApp ou visite nossa loja em São Roque." },
+      { title: "Fale Conosco | MJG Assistech & Imports São Roque" },
+      { name: "description", content: "WhatsApp (11) 99803-7170 · Av. Jaboticabal, 347 – Vila Nova, São Roque. Fale com a equipe da MJG Assistech & Imports." },
+      { property: "og:title", content: "Fale Conosco | MJG Assistech & Imports" },
+      { property: "og:description", content: "Atendimento no WhatsApp (11) 99803-7170 ou venha visitar nossa loja física em São Roque." },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:url", content: "https://mjgimports.com.br/contato" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
   }),
   component: Contato,

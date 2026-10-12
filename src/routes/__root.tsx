@@ -75,20 +75,61 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "MJG Assistech & Imports" },
-      { name: "description", content: "Assistência técnica de celulares e venda de aparelhos em São Roque." },
+      { name: "theme-color", content: "#090d16" },
+      { title: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque" },
+      {
+        name: "description",
+        content:
+          "Conserto de celulares (troca de tela, bateria, conector de carga e reparo de placa), venda de aparelhos novos e seminovos com garantia e acessórios em São Roque.",
+      },
+      { property: "og:site_name", content: "MJG Assistech & Imports" },
+      { property: "og:locale", content: "pt_BR" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mjgimports.com.br/" },
+      {
+        property: "og:title",
+        content: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque",
+      },
+      {
+        property: "og:description",
+        content:
+          "Conserto de celulares (troca de tela, bateria, conector de carga e reparo de placa), venda de aparelhos novos e seminovos com garantia e acessórios em São Roque.",
+      },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "MJG Assistech & Imports - Assistência Técnica de Celulares em São Roque",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Conserto de celulares (troca de tela, bateria, conector e placa), venda de aparelhos novos e seminovos e acessórios em São Roque.",
+      },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@400;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@400;600;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "alternate icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
     ],
   }),
   shellComponent: RootShell,

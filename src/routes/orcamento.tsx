@@ -5,12 +5,16 @@ import { brands, services, waLink } from "@/lib/site";
 export const Route = createFileRoute("/orcamento")({
   head: () => ({
     meta: [
-      { title: "Orçamento grátis | MJG Assistech & Imports" },
-      { name: "description", content: "Peça orçamento de conserto do seu celular pelo WhatsApp em poucos segundos." },
-      { property: "og:title", content: "Orçamento de conserto de celular | MJG" },
-      { property: "og:description", content: "Informe marca, modelo e problema e receba o valor pelo WhatsApp." },
+      { title: "Orçamento Rápido de Conserto de Celular | MJG Assistech" },
+      { name: "description", content: "Peça seu orçamento de conserto de celular pelo WhatsApp em poucos segundos. Atendimento em São Roque." },
+      { property: "og:title", content: "Orçamento de Conserto de Celular | MJG Assistech & Imports" },
+      { property: "og:description", content: "Informe marca, modelo e problema do aparelho e receba o valor pelo WhatsApp na hora." },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:url", content: "https://mjgimports.com.br/orcamento" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
   }),
   component: Orcamento,

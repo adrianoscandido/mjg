@@ -6,12 +6,16 @@ import { services as defaultServices } from "@/lib/site";
 export const Route = createFileRoute("/servicos")({
   head: () => ({
     meta: [
-      { title: "Serviços | MJG Assistech & Imports" },
-      { name: "description", content: "Troca de tela, bateria e conector, reparo de placa, desbloqueio e manutenção de celulares em São Roque." },
-      { property: "og:title", content: "Serviços de conserto de celular | MJG" },
-      { property: "og:description", content: "Todos os serviços de assistência técnica para Samsung, Apple, Motorola, Xiaomi e LG." },
+      { title: "Serviços de Conserto de Celular | MJG Assistech & Imports" },
+      { name: "description", content: "Troca de tela, bateria, conector de carga, reparo avançado de placa e desbloqueios em São Roque com garantia e agilidade." },
+      { property: "og:title", content: "Serviços de Conserto de Celular | MJG Assistech & Imports" },
+      { property: "og:description", content: "Troca de tela, bateria, conector de carga, reparo de placa e desbloqueios para Apple, Samsung, Motorola e Xiaomi em São Roque." },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:url", content: "https://mjgimports.com.br/servicos" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
   }),
   component: Servicos,

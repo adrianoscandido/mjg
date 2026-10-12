@@ -6,12 +6,16 @@ import { brands, brl, phones as defaultPhones, type Phone } from "@/lib/site";
 export const Route = createFileRoute("/celulares")({
   head: () => ({
     meta: [
-      { title: "Celulares novos e seminovos | MJG Imports" },
-      { name: "description", content: "Compre celulares novos e seminovos Apple, Samsung, Motorola e Xiaomi em São Roque." },
-      { property: "og:title", content: "Celulares à venda | MJG Imports" },
-      { property: "og:description", content: "Aparelhos novos e seminovos com atendimento pelo WhatsApp." },
+      { title: "Celulares Novos e Seminovos com Garantia | MJG Imports" },
+      { name: "description", content: "Compre celulares novos e seminovos Apple, Samsung, Motorola e Xiaomi com procedência e garantia em São Roque." },
+      { property: "og:title", content: "Celulares Novos e Seminovos | MJG Imports São Roque" },
+      { property: "og:description", content: "iPhones, linha Galaxy, Moto e Redmi novos e seminovos revisados com garantia e pronta-entrega." },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:url", content: "https://mjgimports.com.br/celulares" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
   }),
   component: Celulares,

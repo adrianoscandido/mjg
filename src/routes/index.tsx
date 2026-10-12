@@ -10,12 +10,35 @@ import { GoogleReviews } from "@/components/GoogleReviews";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MJG Assistech & Imports | Conserto de celular em São Roque" },
-      { name: "description", content: "Troca de tela, bateria, conector, reparo de placa, desbloqueio e venda de celulares novos e seminovos em São Roque." },
-      { property: "og:title", content: "MJG Assistech & Imports | Conserto de celular" },
-      { property: "og:description", content: "Assistência técnica de celulares e venda de aparelhos em Vila Nova – São Roque." },
+      { title: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque" },
+      {
+        name: "description",
+        content:
+          "Conserto de celulares em São Roque: troca de tela, bateria, conector de carga e reparo de placa. Celulares novos e seminovos com garantia e acessórios. Peça seu orçamento pelo WhatsApp!",
+      },
+      { property: "og:site_name", content: "MJG Assistech & Imports" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mjgimports.com.br/" },
+      { property: "og:title", content: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque" },
+      {
+        property: "og:description",
+        content:
+          "Conserto de celulares em São Roque: troca de tela, bateria, conector de carga e reparo de placa. Celulares novos e seminovos com garantia e acessórios. Peça seu orçamento pelo WhatsApp!",
+      },
+      { property: "og:image", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://mjgimports.com.br/og-image.jpg" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "MJG Assistech & Imports - Conserto de Celular em São Roque" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MJG Assistech & Imports | Assistência Técnica de Celulares em São Roque" },
+      {
+        name: "twitter:description",
+        content:
+          "Conserto de celulares em São Roque: troca de tela, bateria, conector e placa. Celulares novos e seminovos e acessórios. Orçamento rápido pelo WhatsApp!",
+      },
+      { name: "twitter:image", content: "https://mjgimports.com.br/og-image.jpg" },
     ],
   }),
   component: Index,
