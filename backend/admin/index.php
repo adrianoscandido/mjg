@@ -119,6 +119,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id]);
             $msg = 'Serviço removido com sucesso!';
         }
+    } elseif ($action === 'novo_parceiro') {
+        $nome = trim($_POST['nome'] ?? '');
+        $logo = trim($_POST['logo'] ?? '🤝');
+        $whatsapp = trim($_POST['whatsapp'] ?? '');
+        $servicosTxt = trim($_POST['servicos'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
+        $ordem = (int)($_POST['ordem'] ?? 0);
+
+        if (!empty($nome) && !empty($servicosTxt)) {
+            $stmt = $pdo->prepare("INSERT INTO parceiros (nome, logo, whatsapp, servicos, descricao, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, 1)");
+            $stmt->execute([$nome, $logo, $whatsapp, $servicosTxt, $descricao, $ordem]);
+            $msg = 'Parceiro cadastrado com sucesso!';
+        } else {
+            $msg = 'Preencha o nome e a lista de serviços do parceiro.';
+            $msgType = 'error';
+        }
+    } elseif ($action === 'editar_parceiro') {
+        $id = (int)($_POST['id'] ?? 0);
+        $nome = trim($_POST['nome'] ?? '');
+        $logo = trim($_POST['logo'] ?? '🤝');
+        $whatsapp = trim($_POST['whatsapp'] ?? '');
+        $servicosTxt = trim($_POST['servicos'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
+        $ordem = (int)($_POST['ordem'] ?? 0);
+
+        if ($id > 0 && !empty($nome) && !empty($servicosTxt)) {
+            $stmt = $pdo->prepare("UPDATE parceiros SET nome = ?, logo = ?, whatsapp = ?, servicos = ?, descricao = ?, ordem = ? WHERE id = ?");
+            $stmt->execute([$nome, $logo, $whatsapp, $servicosTxt, $descricao, $ordem, $id]);
+            $msg = 'Parceiro atualizado com sucesso!';
+        } else {
+            $msg = 'Preencha os campos obrigatórios do parceiro.';
+            $msgType = 'error';
+        }
+    } elseif ($action === 'toggle_status_parceiro') {
+        $id = (int)($_POST['id'] ?? 0);
+        $novoStatus = (int)($_POST['ativo'] ?? 1);
+        if ($id > 0) {
+            $stmt = $pdo->prepare("UPDATE parceiros SET ativo = ? WHERE id = ?");
+            $stmt->execute([$novoStatus, $id]);
+            $msg = 'Status do parceiro atualizado!';
+        }
+    } elseif ($action === 'excluir_parceiro') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $stmt = $pdo->prepare("DELETE FROM parceiros WHERE id = ?");
+            $stmt->execute([$id]);
+            $msg = 'Parceiro removido com sucesso!';
+        }
     }
 }
 
@@ -126,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $celulares = $pdo->query("SELECT * FROM aparelhos_estoque ORDER BY id DESC")->fetchAll();
 $orcamentos = $pdo->query("SELECT * FROM pedidos_orcamento ORDER BY id DESC")->fetchAll();
 $servicos = $pdo->query("SELECT * FROM servicos_prestados ORDER BY ordem ASC, id ASC")->fetchAll();
+$parceiros = $pdo->query("SELECT * FROM parceiros ORDER BY ordem ASC, id ASC")->fetchAll();
 
 $totalEstoque = count($celulares);
 $disponiveis = count(array_filter($celulares, fn($c) => $c['status'] === 'Disponível'));
@@ -133,11 +182,15 @@ $totalOrcamentos = count($orcamentos);
 $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendente'));
 $totalServicos = count($servicos);
 $servicosAtivos = count(array_filter($servicos, fn($s) => (int)$s['ativo'] === 1));
+$totalParceiros = count($parceiros);
+$parceirosAtivos = count(array_filter($parceiros, fn($p) => (int)$p['ativo'] === 1));
 
 $activeTab = 'estoque';
 if (isset($_POST['action'])) {
     if (strpos($_POST['action'], 'servico') !== false) {
         $activeTab = 'servicos';
+    } elseif (strpos($_POST['action'], 'parceiro') !== false) {
+        $activeTab = 'parceiros';
     } elseif (strpos($_POST['action'], 'orcamento') !== false) {
         $activeTab = 'orcamentos';
     } elseif (strpos($_POST['action'], 'senha') !== false) {
@@ -583,6 +636,10 @@ if (isset($_POST['action'])) {
         <div class="kpi-value"><?php echo $servicosAtivos; ?> <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ <?php echo $totalServicos; ?></span></div>
       </div>
       <div class="kpi-card">
+        <div class="kpi-title">Parceiros Ativos</div>
+        <div class="kpi-value"><?php echo $parceirosAtivos; ?> <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ <?php echo $totalParceiros; ?></span></div>
+      </div>
+      <div class="kpi-card">
         <div class="kpi-title">Orçamentos Pendentes</div>
         <div class="kpi-value"><?php echo $pendentes; ?></div>
       </div>
@@ -594,7 +651,8 @@ if (isset($_POST['action'])) {
 
     <div class="tabs">
       <button class="tab-btn <?php echo $activeTab === 'estoque' ? 'active' : ''; ?>" data-tab="estoque" onclick="switchTab('estoque')">📱 Celulares &amp; Estoque</button>
-      <button class="tab-btn <?php echo $activeTab === 'servicos' ? 'active' : ''; ?>" data-tab="servicos" onclick="switchTab('servicos')">🛠️ Serviços Prestados</button>
+      <button class="tab-btn <?php echo $activeTab === 'servicos' ? 'active' : ''; ?>" data-tab="servicos" onclick="switchTab('servicos')">🛠️ Serviços MJG</button>
+      <button class="tab-btn <?php echo $activeTab === 'parceiros' ? 'active' : ''; ?>" data-tab="parceiros" onclick="switchTab('parceiros')">🤝 Serviços de Parceiros</button>
       <button class="tab-btn <?php echo $activeTab === 'orcamentos' ? 'active' : ''; ?>" data-tab="orcamentos" onclick="switchTab('orcamentos')">📋 Orçamentos &amp; Chamados</button>
       <button class="tab-btn <?php echo $activeTab === 'sistema' ? 'active' : ''; ?>" data-tab="sistema" onclick="switchTab('sistema')">⚙️ Configurações / Senha</button>
     </div>
@@ -817,7 +875,149 @@ if (isset($_POST['action'])) {
       </div>
     </div>
 
-    <!-- ABA 3: ORÇAMENTOS E CHAMADOS -->
+    <!-- ABA 3: SERVIÇOS DE PARCEIROS (CRUD) -->
+    <div id="tab-parceiros" class="tab-content <?php echo $activeTab === 'parceiros' ? 'active' : ''; ?>">
+      <div class="card">
+        <h3 class="section-title" id="form-parceiro-title" style="margin-bottom: 1rem;">Cadastrar Novo Parceiro</h3>
+        <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom: 1.25rem;">
+          Cadastre empresas e prestadores de serviços parceiros recomendados pela MJG. Esses serviços são exibidos logo abaixo dos serviços MJG na página de serviços e divulgados no banner especial da página inicial.
+        </p>
+        <form method="POST" action="index.php" id="form-parceiro">
+          <input type="hidden" name="action" id="parceiro-action" value="novo_parceiro">
+          <input type="hidden" name="id" id="parceiro-id" value="">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nome do Parceiro / Empresa</label>
+              <input type="text" name="nome" id="parceiro-nome" placeholder="Ex: Rede Tech &amp; CFTV São Roque" required>
+            </div>
+            <div class="form-group">
+              <label>Logo ou Ícone do Parceiro</label>
+              <input type="text" name="logo" id="parceiro-logo" placeholder="Emoji (📹, 🎨, 🤝) ou URL da Logo" value="🤝" required>
+            </div>
+            <div class="form-group">
+              <label>WhatsApp / Telefone de Contato</label>
+              <input type="text" name="whatsapp" id="parceiro-whatsapp" placeholder="Ex: 11998037170 ou (11) 99803-7170">
+            </div>
+            <div class="form-group">
+              <label>Ordem de Exibição</label>
+              <input type="number" name="ordem" id="parceiro-ordem" value="10" min="0" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Lista de Serviços do Parceiro (Separados por vírgula ou tópicos)</label>
+            <textarea name="servicos" id="parceiro-servicos" rows="2" placeholder="Ex: Câmeras de Monitoramento (CFTV), Instalação de Wi-Fi, Cabeamento Estruturado, Alarmes Residenciais" required></textarea>
+            <small style="color:var(--text-muted); font-size:0.75rem;">Dica: Digite os serviços separados por vírgula para serem exibidos como tags visuais destacadas no site.</small>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Descrição / Apresentação do Parceiro</label>
+            <textarea name="descricao" id="parceiro-descricao" rows="2" placeholder="Ex: Especialistas em segurança eletrônica e infraestrutura de alta velocidade em São Roque e região..."></textarea>
+          </div>
+
+          <div style="margin-top: 1rem; display: flex; gap: 0.75rem; align-items: center;">
+            <button type="submit" class="btn-add" id="btn-parceiro-submit">+ Salvar Parceiro</button>
+            <button type="button" class="btn-action" id="btn-parceiro-cancel" onclick="cancelarEdicaoParceiro()" style="display: none;">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-header">
+        <h3 class="section-title">Parceiros Cadastrados (<?php echo count($parceiros); ?>)</h3>
+      </div>
+      <div class="data-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">ID</th>
+              <th style="width: 70px;">Logo</th>
+              <th>Parceiro</th>
+              <th>Serviços Oferecidos</th>
+              <th style="width: 140px;">Contato</th>
+              <th style="width: 70px;">Ordem</th>
+              <th style="width: 90px;">Status</th>
+              <th style="width: 190px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (empty($parceiros)): ?>
+              <tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum parceiro cadastrado ainda.</td></tr>
+            <?php else: ?>
+              <?php foreach ($parceiros as $p): ?>
+                <tr>
+                  <td>#<?php echo $p['id']; ?></td>
+                  <td style="font-size: 1.5rem; text-align: center;">
+                    <?php if (str_starts_with($p['logo'] ?? '', 'http') || str_starts_with($p['logo'] ?? '', '/')): ?>
+                      <img src="<?php echo htmlspecialchars($p['logo']); ?>" alt="Logo" style="width:36px; height:36px; object-fit:contain; border-radius:4px;">
+                    <?php else: ?>
+                      <?php echo htmlspecialchars($p['logo'] ?: '🤝'); ?>
+                    <?php endif; ?>
+                  </td>
+                  <td>
+                    <strong><?php echo htmlspecialchars($p['nome']); ?></strong>
+                    <?php if (!empty($p['descricao'])): ?>
+                      <br><small style="color:var(--text-muted); font-size:0.8rem;"><?php echo htmlspecialchars($p['descricao']); ?></small>
+                    <?php endif; ?>
+                  </td>
+                  <td>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                      <?php 
+                        $itens = array_filter(array_map('trim', explode(',', $p['servicos'] ?? '')));
+                        foreach ($itens as $it):
+                      ?>
+                        <span style="display:inline-block; font-size:0.75rem; background:rgba(56,189,248,0.12); color:var(--primary); padding:2px 8px; border-radius:4px; border:1px solid rgba(56,189,248,0.25);">
+                          <?php echo htmlspecialchars($it); ?>
+                        </span>
+                      <?php endforeach; ?>
+                    </div>
+                  </td>
+                  <td>
+                    <?php if (!empty($p['whatsapp'])): 
+                      $cleanWa = preg_replace('/\D/', '', $p['whatsapp']);
+                      if (strlen($cleanWa) === 10 || strlen($cleanWa) === 11) {
+                          $cleanWa = '55' . $cleanWa;
+                      }
+                    ?>
+                      <a href="https://wa.me/<?php echo $cleanWa; ?>" target="_blank" style="color:var(--success); font-weight:700; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:3px;">
+                        🟢 <?php echo htmlspecialchars($p['whatsapp']); ?>
+                      </a>
+                    <?php else: ?>
+                      <span style="color:var(--text-muted); font-size:0.8rem;">-</span>
+                    <?php endif; ?>
+                  </td>
+                  <td><?php echo (int)$p['ordem']; ?></td>
+                  <td>
+                    <?php if ((int)$p['ativo'] === 1): ?>
+                      <span class="badge disponivel">Ativo</span>
+                    <?php else: ?>
+                      <span class="badge vendido">Inativo</span>
+                    <?php endif; ?>
+                  </td>
+                  <td>
+                    <div class="actions-cell">
+                      <button type="button" class="btn-action" onclick='prepararEdicaoParceiro(<?php echo htmlspecialchars(json_encode($p), ENT_QUOTES, 'UTF-8'); ?>)'>✏️ Editar</button>
+                      <form method="POST" action="index.php" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_status_parceiro">
+                        <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
+                        <input type="hidden" name="ativo" value="<?php echo (int)$p['ativo'] === 1 ? '0' : '1'; ?>">
+                        <button type="submit" class="btn-action" title="Alternar status"><?php echo (int)$p['ativo'] === 1 ? '⏸️ Pausar' : '▶️ Ativar'; ?></button>
+                      </form>
+                      <form method="POST" action="index.php" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir o parceiro <?php echo addslashes($p['nome']); ?>?');">
+                        <input type="hidden" name="action" value="excluir_parceiro">
+                        <input type="hidden" name="id" value="<?php echo $p['id']; ?>">
+                        <button type="submit" class="btn-action del" title="Excluir parceiro">🗑️</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ABA 4: ORÇAMENTOS E CHAMADOS -->
     <div id="tab-orcamentos" class="tab-content <?php echo $activeTab === 'orcamentos' ? 'active' : ''; ?>">
       <div class="card">
         <h3 class="section-title" style="margin-bottom: 1rem;">Registrar Novo Orçamento Manual</h3>
@@ -1078,6 +1278,35 @@ if (isset($_POST['action'])) {
       selecionarIcone('📱', 'Smartphone / Celular');
       document.getElementById('btn-servico-submit').textContent = '+ Salvar Serviço';
       document.getElementById('btn-servico-cancel').style.display = 'none';
+    }
+
+    function prepararEdicaoParceiro(parceiro) {
+      document.getElementById('form-parceiro-title').textContent = 'Editar Parceiro: ' + parceiro.nome;
+      document.getElementById('parceiro-action').value = 'editar_parceiro';
+      document.getElementById('parceiro-id').value = parceiro.id;
+      document.getElementById('parceiro-nome').value = parceiro.nome;
+      document.getElementById('parceiro-logo').value = parceiro.logo || '🤝';
+      document.getElementById('parceiro-whatsapp').value = parceiro.whatsapp || '';
+      document.getElementById('parceiro-ordem').value = parceiro.ordem || '10';
+      document.getElementById('parceiro-servicos').value = parceiro.servicos || '';
+      document.getElementById('parceiro-descricao').value = parceiro.descricao || '';
+      document.getElementById('btn-parceiro-submit').textContent = '💾 Atualizar Parceiro';
+      document.getElementById('btn-parceiro-cancel').style.display = 'inline-block';
+      document.getElementById('form-parceiro').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelarEdicaoParceiro() {
+      document.getElementById('form-parceiro-title').textContent = 'Cadastrar Novo Parceiro';
+      document.getElementById('parceiro-action').value = 'novo_parceiro';
+      document.getElementById('parceiro-id').value = '';
+      document.getElementById('parceiro-nome').value = '';
+      document.getElementById('parceiro-logo').value = '🤝';
+      document.getElementById('parceiro-whatsapp').value = '';
+      document.getElementById('parceiro-ordem').value = '10';
+      document.getElementById('parceiro-servicos').value = '';
+      document.getElementById('parceiro-descricao').value = '';
+      document.getElementById('btn-parceiro-submit').textContent = '+ Salvar Parceiro';
+      document.getElementById('btn-parceiro-cancel').style.display = 'none';
     }
 
     // Inicializa a galeria de ícones pré-carregados ao abrir a página

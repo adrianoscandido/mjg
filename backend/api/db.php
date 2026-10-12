@@ -140,4 +140,45 @@ function initDatabase(PDO $pdo): void {
             $insS->execute($s);
         }
     }
+
+    // 7. Tabela de parceiros e serviços de parceiros (CRUD)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS parceiros (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(120) NOT NULL,
+        logo VARCHAR(255) DEFAULT '🤝',
+        whatsapp VARCHAR(50) DEFAULT NULL,
+        servicos TEXT NOT NULL,
+        descricao TEXT DEFAULT NULL,
+        ordem INT DEFAULT 0,
+        ativo TINYINT(1) DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // Popular parceiros padrão se a tabela estiver vazia
+    $stmtParceiros = $pdo->query("SELECT COUNT(*) FROM parceiros");
+    if ((int)$stmtParceiros->fetchColumn() === 0) {
+        $sampleParceiros = [
+            [
+                'Rede Tech & CFTV São Roque',
+                '📹',
+                '11998037170',
+                'Câmeras de Segurança (CFTV), Instalação de Redes Wi-Fi, Cabeamento Estruturado, Alarmes Residenciais e Comerciais',
+                'Especialista em segurança eletrônica e infraestrutura de rede para residências e empresas.',
+                1
+            ],
+            [
+                'Gráfica & Películas Express',
+                '🎨',
+                '11998037170',
+                'Películas de Alta Proteção Personalizadas, Capinhas Customizadas com Foto, Adesivos Resinados, Brindes e Gráfica Rápida',
+                'Personalização de acessórios e impressões digitais de alta durabilidade.',
+                2
+            ]
+        ];
+        $insParc = $pdo->prepare("INSERT INTO parceiros (nome, logo, whatsapp, servicos, descricao, ordem, ativo) VALUES (?, ?, ?, ?, ?, ?, 1)");
+        foreach ($sampleParceiros as $p) {
+            $insParc->execute($p);
+        }
+    }
 }
