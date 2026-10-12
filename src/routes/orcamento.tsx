@@ -31,7 +31,7 @@ function Orcamento() {
       }).catch(() => {});
     } catch {}
     const telInfo = f.telefone ? `\nContato: ${f.telefone}` : "";
-    const msg = `Olá! Meu nome é ${f.nome}.${telInfo}\nGostaria de um orçamento:\nAparelho: ${f.marca} ${f.modelo}\nServiço: ${f.servico}\nProblema: ${f.problema}`;
+    const msg = `Olá, vim pelo site! Meu nome é ${f.nome}.${telInfo}\nGostaria de um orçamento:\nAparelho: ${f.marca} ${f.modelo}\nServiço: ${f.servico}\nProblema: ${f.problema}`;
     window.open(waLink(msg), "_blank");
   };
   return (

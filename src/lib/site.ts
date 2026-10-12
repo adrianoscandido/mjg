@@ -7,7 +7,7 @@ export const MAPS_URL = `https://www.google.com/maps?cid=${MAPS_CID}`;
 export const MAPS_DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=MJG+Assist%C3%AAncia+T%C3%A9cnica+de+Celulares,+Av.+Jaboticabal,+347+-+Vila+Nova,+S%C3%A3o+Roque+-+SP`;
 export const MAPS_EMBED_URL = `https://maps.google.com/maps?cid=${MAPS_CID}&output=embed`;
 
-export const waLink = (msg: string) =>
+export const waLink = (msg: string = "Olá, vim pelo site!") =>
   `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 
 export const services = [

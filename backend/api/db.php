@@ -97,4 +97,34 @@ function initDatabase(PDO $pdo): void {
             $insP->execute($p);
         }
     }
+
+    // 6. Tabela de serviços prestados (CRUD)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS servicos_prestados (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        titulo VARCHAR(100) NOT NULL,
+        descricao TEXT NOT NULL,
+        icone VARCHAR(50) NOT NULL DEFAULT '📱',
+        ordem INT DEFAULT 0,
+        ativo TINYINT(1) DEFAULT 1,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // Popular serviços padrão se a tabela estiver vazia
+    $stmtServicos = $pdo->query("SELECT COUNT(*) FROM servicos_prestados");
+    if ((int)$stmtServicos->fetchColumn() === 0) {
+        $sampleServicos = [
+            ['Troca de tela', 'Tela trincada, manchada ou sem toque? Trocamos com peças de qualidade e garantia.', '📱', 1],
+            ['Troca de bateria', 'Celular descarregando rápido ou desligando sozinho? Bateria nova com alta durabilidade.', '🔋', 2],
+            ['Troca de conector', 'Não carrega ou só carrega em uma posição? Trocamos o conector de carga.', '🔌', 3],
+            ['Reparo na placa', 'Celular não liga, molhou ou sofreu queda? Diagnóstico avançado e reparo de placa.', '🛠️', 4],
+            ['Desbloqueios', 'Desbloqueio de aparelhos com segurança, agilidade e total sigilo.', '🔓', 5],
+            ['Manutenção geral', 'Alto-falante, microfone, câmera, botões e limpeza interna detalhada.', '⚙️', 6],
+            ['Cabos e carregadores', 'Cabos reforçados, carregadores rápidos, fontes e películas para todas as marcas.', '🔌', 7],
+        ];
+        $insS = $pdo->prepare("INSERT INTO servicos_prestados (titulo, descricao, icone, ordem, ativo) VALUES (?, ?, ?, ?, 1)");
+        foreach ($sampleServicos as $s) {
+            $insS->execute($s);
+        }
+    }
 }

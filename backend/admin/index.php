@@ -75,17 +75,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = 'A nova senha deve ter no mínimo 6 caracteres.';
             $msgType = 'error';
         }
+    } elseif ($action === 'novo_servico') {
+        $titulo = trim($_POST['titulo'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
+        $icone = trim($_POST['icone'] ?? '📱');
+        $ordem = (int)($_POST['ordem'] ?? 0);
+
+        if (!empty($titulo) && !empty($descricao)) {
+            $stmt = $pdo->prepare("INSERT INTO servicos_prestados (titulo, descricao, icone, ordem, ativo) VALUES (?, ?, ?, ?, 1)");
+            $stmt->execute([$titulo, $descricao, $icone, $ordem]);
+            $msg = 'Serviço cadastrado com sucesso!';
+        } else {
+            $msg = 'Preencha o título e a descrição do serviço.';
+            $msgType = 'error';
+        }
+    } elseif ($action === 'editar_servico') {
+        $id = (int)($_POST['id'] ?? 0);
+        $titulo = trim($_POST['titulo'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
+        $icone = trim($_POST['icone'] ?? '📱');
+        $ordem = (int)($_POST['ordem'] ?? 0);
+
+        if ($id > 0 && !empty($titulo) && !empty($descricao)) {
+            $stmt = $pdo->prepare("UPDATE servicos_prestados SET titulo = ?, descricao = ?, icone = ?, ordem = ? WHERE id = ?");
+            $stmt->execute([$titulo, $descricao, $icone, $ordem, $id]);
+            $msg = 'Serviço atualizado com sucesso!';
+        } else {
+            $msg = 'Preencha todos os campos do serviço.';
+            $msgType = 'error';
+        }
+    } elseif ($action === 'toggle_status_servico') {
+        $id = (int)($_POST['id'] ?? 0);
+        $novoStatus = (int)($_POST['ativo'] ?? 1);
+        if ($id > 0) {
+            $stmt = $pdo->prepare("UPDATE servicos_prestados SET ativo = ? WHERE id = ?");
+            $stmt->execute([$novoStatus, $id]);
+            $msg = 'Status do serviço atualizado!';
+        }
+    } elseif ($action === 'excluir_servico') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $stmt = $pdo->prepare("DELETE FROM servicos_prestados WHERE id = ?");
+            $stmt->execute([$id]);
+            $msg = 'Serviço removido com sucesso!';
+        }
     }
 }
 
 // Consultas
 $celulares = $pdo->query("SELECT * FROM aparelhos_estoque ORDER BY id DESC")->fetchAll();
 $orcamentos = $pdo->query("SELECT * FROM pedidos_orcamento ORDER BY id DESC")->fetchAll();
+$servicos = $pdo->query("SELECT * FROM servicos_prestados ORDER BY ordem ASC, id ASC")->fetchAll();
 
 $totalEstoque = count($celulares);
 $disponiveis = count(array_filter($celulares, fn($c) => $c['status'] === 'Disponível'));
 $totalOrcamentos = count($orcamentos);
 $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendente'));
+$totalServicos = count($servicos);
+$servicosAtivos = count(array_filter($servicos, fn($s) => (int)$s['ativo'] === 1));
+
+$activeTab = 'estoque';
+if (isset($_POST['action'])) {
+    if (strpos($_POST['action'], 'servico') !== false) {
+        $activeTab = 'servicos';
+    } elseif (strpos($_POST['action'], 'orcamento') !== false) {
+        $activeTab = 'orcamentos';
+    } elseif (strpos($_POST['action'], 'senha') !== false) {
+        $activeTab = 'sistema';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -447,6 +505,10 @@ $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendent
         <div class="kpi-value"><?php echo $disponiveis; ?></div>
       </div>
       <div class="kpi-card">
+        <div class="kpi-title">Serviços Ativos</div>
+        <div class="kpi-value"><?php echo $servicosAtivos; ?> <span style="font-size:1.1rem; color:var(--text-muted); font-weight:600;">/ <?php echo $totalServicos; ?></span></div>
+      </div>
+      <div class="kpi-card">
         <div class="kpi-title">Orçamentos Pendentes</div>
         <div class="kpi-value"><?php echo $pendentes; ?></div>
       </div>
@@ -457,13 +519,14 @@ $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendent
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('estoque')">📱 Celulares &amp; Estoque</button>
-      <button class="tab-btn" onclick="switchTab('orcamentos')">🛠️ Orçamentos &amp; Chamados</button>
-      <button class="tab-btn" onclick="switchTab('sistema')">⚙️ Configurações / Senha</button>
+      <button class="tab-btn <?php echo $activeTab === 'estoque' ? 'active' : ''; ?>" data-tab="estoque" onclick="switchTab('estoque')">📱 Celulares &amp; Estoque</button>
+      <button class="tab-btn <?php echo $activeTab === 'servicos' ? 'active' : ''; ?>" data-tab="servicos" onclick="switchTab('servicos')">🛠️ Serviços Prestados</button>
+      <button class="tab-btn <?php echo $activeTab === 'orcamentos' ? 'active' : ''; ?>" data-tab="orcamentos" onclick="switchTab('orcamentos')">📋 Orçamentos &amp; Chamados</button>
+      <button class="tab-btn <?php echo $activeTab === 'sistema' ? 'active' : ''; ?>" data-tab="sistema" onclick="switchTab('sistema')">⚙️ Configurações / Senha</button>
     </div>
 
     <!-- ABA 1: CELULARES EM ESTOQUE -->
-    <div id="tab-estoque" class="tab-content active">
+    <div id="tab-estoque" class="tab-content <?php echo $activeTab === 'estoque' ? 'active' : ''; ?>">
       <div class="card">
         <h3 class="section-title" style="margin-bottom: 1rem;">Cadastrar Novo Aparelho</h3>
         <form method="POST" action="index.php">
@@ -567,8 +630,98 @@ $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendent
       </div>
     </div>
 
-    <!-- ABA 2: ORÇAMENTOS E CHAMADOS -->
-    <div id="tab-orcamentos" class="tab-content">
+    <!-- ABA 2: SERVIÇOS PRESTADOS -->
+    <div id="tab-servicos" class="tab-content <?php echo $activeTab === 'servicos' ? 'active' : ''; ?>">
+      <div class="card">
+        <h3 class="section-title" id="form-servico-title" style="margin-bottom: 1rem;">Cadastrar Novo Serviço</h3>
+        <form method="POST" action="index.php" id="form-servico">
+          <input type="hidden" name="action" id="servico-action" value="novo_servico">
+          <input type="hidden" name="id" id="servico-id" value="">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Título do Serviço</label>
+              <input type="text" name="titulo" id="servico-titulo" placeholder="Ex: Troca de Tela, Reparo de Placa" required>
+            </div>
+            <div class="form-group">
+              <label>Ícone / Emoji</label>
+              <input type="text" name="icone" id="servico-icone" placeholder="Ex: 📱, 🔋, 🔌, 🛠️, 🔓, ⚙️" value="📱" required>
+            </div>
+            <div class="form-group">
+              <label>Ordem de Exibição</label>
+              <input type="number" name="ordem" id="servico-ordem" value="10" min="0" required>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Descrição Detalhada</label>
+            <textarea name="descricao" id="servico-descricao" rows="3" placeholder="Descreva o serviço oferecido aos clientes..." required></textarea>
+          </div>
+          <div style="margin-top: 1rem; display: flex; gap: 0.75rem; align-items: center;">
+            <button type="submit" class="btn-add" id="btn-servico-submit">+ Salvar Serviço</button>
+            <button type="button" class="btn-action" id="btn-servico-cancel" onclick="cancelarEdicaoServico()" style="display: none;">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-header">
+        <h3 class="section-title">Serviços Prestados Cadastrados (<?php echo count($servicos); ?>)</h3>
+      </div>
+      <div class="data-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">ID</th>
+              <th style="width: 60px;">Ícone</th>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th style="width: 80px;">Ordem</th>
+              <th style="width: 100px;">Status</th>
+              <th style="width: 190px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (empty($servicos)): ?>
+              <tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2rem;">Nenhum serviço cadastrado ainda.</td></tr>
+            <?php else: ?>
+              <?php foreach ($servicos as $s): ?>
+                <tr>
+                  <td>#<?php echo $s['id']; ?></td>
+                  <td style="font-size: 1.5rem; text-align: center;"><?php echo htmlspecialchars($s['icone'] ?: '🛠️'); ?></td>
+                  <td><strong><?php echo htmlspecialchars($s['titulo']); ?></strong></td>
+                  <td style="color:var(--text-muted); font-size:0.875rem; max-width: 340px;"><?php echo htmlspecialchars($s['descricao']); ?></td>
+                  <td><?php echo (int)$s['ordem']; ?></td>
+                  <td>
+                    <?php if ((int)$s['ativo'] === 1): ?>
+                      <span class="badge disponivel">Ativo</span>
+                    <?php else: ?>
+                      <span class="badge vendido">Inativo</span>
+                    <?php endif; ?>
+                  </td>
+                  <td>
+                    <div class="actions-cell">
+                      <button type="button" class="btn-action" onclick='prepararEdicaoServico(<?php echo htmlspecialchars(json_encode($s), ENT_QUOTES, 'UTF-8'); ?>)'>✏️ Editar</button>
+                      <form method="POST" action="index.php" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_status_servico">
+                        <input type="hidden" name="id" value="<?php echo $s['id']; ?>">
+                        <input type="hidden" name="ativo" value="<?php echo (int)$s['ativo'] === 1 ? '0' : '1'; ?>">
+                        <button type="submit" class="btn-action" title="Alternar status"><?php echo (int)$s['ativo'] === 1 ? '⏸️ Pausar' : '▶️ Ativar'; ?></button>
+                      </form>
+                      <form method="POST" action="index.php" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir o serviço <?php echo addslashes($s['titulo']); ?>?');">
+                        <input type="hidden" name="action" value="excluir_servico">
+                        <input type="hidden" name="id" value="<?php echo $s['id']; ?>">
+                        <button type="submit" class="btn-action del" title="Excluir serviço">🗑️</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ABA 3: ORÇAMENTOS E CHAMADOS -->
+    <div id="tab-orcamentos" class="tab-content <?php echo $activeTab === 'orcamentos' ? 'active' : ''; ?>">
       <div class="card">
         <h3 class="section-title" style="margin-bottom: 1rem;">Registrar Novo Orçamento Manual</h3>
         <form method="POST" action="index.php">
@@ -671,8 +824,8 @@ $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendent
       </div>
     </div>
 
-    <!-- ABA 3: SISTEMA / SEGURANÇA -->
-    <div id="tab-sistema" class="tab-content">
+    <!-- ABA 4: SISTEMA / SEGURANÇA -->
+    <div id="tab-sistema" class="tab-content <?php echo $activeTab === 'sistema' ? 'active' : ''; ?>">
       <div class="card" style="max-width: 600px;">
         <h3 class="section-title" style="margin-bottom: 1rem;">Alterar Senha do Administrador</h3>
         <form method="POST" action="index.php">
@@ -705,16 +858,35 @@ $pendentes = count(array_filter($orcamentos, fn($o) => $o['status'] === 'Pendent
     function switchTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      if (tab === 'estoque') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('tab-estoque').classList.add('active');
-      } else if (tab === 'orcamentos') {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('tab-orcamentos').classList.add('active');
-      } else {
-        document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        document.getElementById('tab-sistema').classList.add('active');
-      }
+      const activeBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      const activeContent = document.getElementById(`tab-${tab}`);
+      if (activeContent) activeContent.classList.add('active');
+    }
+
+    function prepararEdicaoServico(servico) {
+      document.getElementById('form-servico-title').textContent = 'Editar Serviço: ' + servico.titulo;
+      document.getElementById('servico-action').value = 'editar_servico';
+      document.getElementById('servico-id').value = servico.id;
+      document.getElementById('servico-titulo').value = servico.titulo;
+      document.getElementById('servico-icone').value = servico.icone || '📱';
+      document.getElementById('servico-ordem').value = servico.ordem;
+      document.getElementById('servico-descricao').value = servico.descricao;
+      document.getElementById('btn-servico-submit').textContent = '💾 Atualizar Serviço';
+      document.getElementById('btn-servico-cancel').style.display = 'inline-block';
+      document.getElementById('form-servico').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelarEdicaoServico() {
+      document.getElementById('form-servico-title').textContent = 'Cadastrar Novo Serviço';
+      document.getElementById('servico-action').value = 'novo_servico';
+      document.getElementById('servico-id').value = '';
+      document.getElementById('servico-titulo').value = '';
+      document.getElementById('servico-icone').value = '📱';
+      document.getElementById('servico-ordem').value = '10';
+      document.getElementById('servico-descricao').value = '';
+      document.getElementById('btn-servico-submit').textContent = '+ Salvar Serviço';
+      document.getElementById('btn-servico-cancel').style.display = 'none';
     }
   </script>
 </body>

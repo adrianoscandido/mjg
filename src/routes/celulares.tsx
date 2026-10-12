@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WaButton } from "@/components/Layout";
-import { brands, brl, phones } from "@/lib/site";
+import { brands, brl, phones as defaultPhones, type Phone } from "@/lib/site";
 
 export const Route = createFileRoute("/celulares")({
   head: () => ({
@@ -21,9 +21,30 @@ const chip = (on: boolean) =>
   `rounded-full border px-4 py-2 text-sm font-semibold transition ${on ? "border-primary bg-primary text-primary-foreground" : "bg-card text-foreground hover:border-primary"}`;
 
 function Celulares() {
+  const [items, setItems] = useState<Phone[]>(defaultPhones);
   const [cond, setCond] = useState("Todos");
   const [brand, setBrand] = useState("Todas");
-  const list = phones.filter((p) => (cond === "Todos" || p.condition === cond) && (brand === "Todas" || p.brand === brand));
+
+  useEffect(() => {
+    fetch("/api/celulares.php")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res?.ok && Array.isArray(res.dados) && res.dados.length > 0) {
+          setItems(
+            res.dados.map((d: any) => ({
+              name: d.nome,
+              brand: d.marca,
+              condition: d.condicao as "Novo" | "Seminovo",
+              storage: d.armazenamento,
+              price: parseFloat(d.preco),
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const list = items.filter((p) => (cond === "Todos" || p.condition === cond) && (brand === "Todas" || p.brand === brand));
   return (
     <section className="mx-auto max-w-6xl px-4 py-14">
       <h1 className="font-display text-6xl text-primary">Celulares à venda</h1>
@@ -41,7 +62,7 @@ function Celulares() {
             <h2 className="mt-2 text-xl font-bold">{p.name}</h2>
             <p className="text-sm text-muted-foreground">{p.brand} · {p.storage}</p>
             <p className="mt-3 flex-1 text-2xl font-bold text-primary">{brl(p.price)}</p>
-            <div className="mt-4"><WaButton variant="outline" msg={`Olá! Tenho interesse no ${p.name} ${p.storage} (${p.condition}).`}>Tenho interesse</WaButton></div>
+            <div className="mt-4"><WaButton variant="outline" msg={`Olá, vim pelo site! Tenho interesse no ${p.name} ${p.storage} (${p.condition}).`}>Tenho interesse</WaButton></div>
           </div>
         ))}
         {list.length === 0 && <p className="text-muted-foreground">Nenhum aparelho com esse filtro. Fale conosco no WhatsApp!</p>}

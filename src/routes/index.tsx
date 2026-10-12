@@ -85,7 +85,7 @@ function Index() {
       <section className="mx-auto max-w-6xl px-4 py-16 text-center">
         <h2 className="font-display text-5xl text-primary">Celular com problema?</h2>
         <p className="mt-2 text-muted-foreground">Fale agora com a gente e resolva hoje mesmo.</p>
-        <div className="mt-6"><WaButton msg="Olá! Meu celular está com problema.">💬 Falar no WhatsApp</WaButton></div>
+        <div className="mt-6"><WaButton msg="Olá, vim pelo site!">💬 Falar no WhatsApp</WaButton></div>
       </section>
     </>
   );

@@ -28,7 +28,7 @@ function Contato() {
           <p><strong>Horário:</strong> Segunda a sábado (confirme pelo WhatsApp)</p>
         </div>
         <div className="mt-8 flex flex-wrap gap-4">
-          <WaButton msg="Olá! Vim pelo site.">💬 Chamar no WhatsApp</WaButton>
+          <WaButton msg="Olá, vim pelo site!">💬 Chamar no WhatsApp</WaButton>
           <a
             href={MAPS_URL}
             target="_blank"
